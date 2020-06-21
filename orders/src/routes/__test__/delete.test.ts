@@ -1,11 +1,14 @@
 import request from "supertest";
+import mongoose from "mongoose";
 import { app } from "../../app";
 import { Ticket } from "../../models/tickets";
 import { OrderStatus } from "@demris/common";
 import { Order } from "../../models/orders";
+import { natsWrapper } from "../../nats-wrapper";
 
 const buildTicket = async () => {
   const ticket = Ticket.build({
+    id: mongoose.Types.ObjectId().toHexString(),
     title: "concert",
     price: 10,
   });
@@ -58,4 +61,23 @@ it("throws an error if one user tries to delete another user orders ", async () 
   expect(fetchedOrder.id).toEqual(undefined);
 });
 
-it.todo("emits an event upon delete");
+it("emits an order delete event", async () => {
+  const ticket = await buildTicket();
+  const user = global.signin();
+
+  const { body: order } = await request(app)
+    .post("/api/orders")
+    .set("Cookie", user)
+    .send({
+      ticketId: ticket.id,
+    })
+    .expect(201);
+
+  await request(app)
+    .delete(`/api/orders/${order.id}`)
+    .set("Cookie", user)
+    .send()
+    .expect(204);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
