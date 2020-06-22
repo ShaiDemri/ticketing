@@ -5,6 +5,7 @@ import {
   validateRequest,
   NotFoundError,
   NotAuthorizedError,
+  BadRequestError,
 } from "@demris/common";
 import { Ticket } from "../models/ticket";
 import { natsWrapper } from "../nats-wrapper";
@@ -29,9 +30,15 @@ router.put(
     if (!ticket) {
       throw new NotFoundError();
     }
+    if (ticket.orderId) {
+      throw new BadRequestError(
+        "Ticket is currently attached to an order. You can't edit it right now"
+      );
+    }
     if (ticket.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
+
     const title = req.body.title;
     const price = req.body.price;
     ticket.set({ title: title, price: price });

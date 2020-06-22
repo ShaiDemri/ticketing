@@ -1,7 +1,8 @@
 import request from "supertest";
+import mongoose from "mongoose";
 import { app } from "../../app";
 import { natsWrapper } from "../../nats-wrapper";
-import mongoose from "mongoose";
+import { Ticket } from "../../models/ticket";
 
 it("updates the title correctly", async () => {
   const cookie = global.signin();
@@ -146,4 +147,29 @@ it("publish an event upon update", async () => {
     .send({ title: updatedTitle, price })
     .expect(200);
   expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it("rejects updates if the ticket is reserved", async () => {
+  const cookie = global.signin();
+  const title = `ticket to update`;
+  const updatedTitle = `updated ticket`;
+  const price = 5;
+
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send({ title, price })
+    .expect(201);
+  const ticketId = response.body.id;
+  const orderId = new mongoose.Types.ObjectId().toHexString();
+  const ticket = await Ticket.findById(ticketId);
+  ticket!.set({ orderId });
+  await ticket!.save();
+
+  jest.clearAllMocks();
+  await request(app)
+    .put(`/api/tickets/${ticketId}`)
+    .set("Cookie", cookie)
+    .send({ title: updatedTitle, price })
+    .expect(400);
 });
