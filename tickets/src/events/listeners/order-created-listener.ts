@@ -1,10 +1,5 @@
 import { Message } from "node-nats-streaming";
-import {
-  Listener,
-  OrderCreatedEvent,
-  Subjects,
-  NotFoundError,
-} from "@demris/common";
+import { Listener, OrderCreatedEvent, Subjects } from "@demris/common";
 import { queueGroupName } from "./queue-group-name";
 import { Ticket } from "../../models/ticket";
 import { TicketUpdatedPublisher } from "../publishers/ticket-updated-publisher";
@@ -18,7 +13,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
     const reservedTicket = await Ticket.findById(ticket.id);
 
     if (!reservedTicket) {
-      throw new NotFoundError();
+      throw new Error("ticket not found");
     }
 
     reservedTicket.set({ orderId: data.id });
