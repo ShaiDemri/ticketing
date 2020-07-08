@@ -46,7 +46,7 @@ const start = async () => {
     console.error(err);
   }
   app.listen(3000, () => {
-    console.log("\x1b[32m", "TICKETS is Listening  on port 3000!!!");
+    console.log("\x1b[32m", "PAYMENTS is Listening  on port 3000!!!");
   });
 };
 start();
