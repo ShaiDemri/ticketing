@@ -12,7 +12,7 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
   subject: Subjects.PaymentCreated = Subjects.PaymentCreated;
   queueGroupName = queueGroupName;
   async onMessage(data: PaymentCreatedEvent["data"], msg: Message) {
-    const orderId = data;
+    const { orderId } = data;
     const order = await Order.findById(orderId);
     if (!order) {
       throw new Error("not found");
