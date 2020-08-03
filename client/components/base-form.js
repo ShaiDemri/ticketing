@@ -1,39 +1,26 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Router from "next/router";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import IconButton from "@material-ui/core/IconButton";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  Container,
+  Paper,
+  Typography,
+  CssBaseline,
+  Avatar,
+  Button,
+  Link,
+  Grid,
+  IconButton,
+  OutlinedInput,
+  InputAdornment,
+  TextField,
+  InputLabel,
+  FormControl,
+} from "@material-ui/core";
+
+import { Visibility, VisibilityOff, LockOutlined } from "@material-ui/icons/";
 
 import useRequest from "../hooks/use-request";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        GetTix
-      </Link>
-      {" " + new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -65,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default ({ url, label }) => {
+const baseForm = ({ url, label }) => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -93,11 +80,11 @@ export default ({ url, label }) => {
 
   const changeForm =
     label === "sign in" ? (
-      <Link href="/auth/signup" variant="body2">
+      <Link href="/auth/signup" variant="body2" component="a">
         {"Don't have an account? Sign Up"}
       </Link>
     ) : (
-      <Link href="/auth/signin" variant="body2">
+      <Link href="/auth/signin" variant="body2" component="a">
         {"Already have an account? Sign In"}
       </Link>
     );
@@ -113,7 +100,7 @@ export default ({ url, label }) => {
           alignItems="center"
         >
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
+            <LockOutlined />
           </Avatar>
           <Typography className={classes.label} component="h1" variant="h5">
             {label}
@@ -181,10 +168,8 @@ export default ({ url, label }) => {
             </Grid>
           </form>
         </Grid>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
       </Container>
     </Paper>
   );
 };
+export default baseForm;

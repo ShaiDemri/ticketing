@@ -16,6 +16,7 @@ const theme = createMuiTheme({
     background: {
       default: "#fff",
     },
+    typography: { fontFamily: "Lobster" },
   },
 });
 

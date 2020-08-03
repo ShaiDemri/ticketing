@@ -1,7 +1,20 @@
 import axios from "axios";
 import { useState } from "react";
+import MuiAlert from "@material-ui/lab/Alert";
+import { makeStyles } from "@material-ui/core/styles";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    marginBottom: theme.spacing(2),
+    textTransform: "uppercase",
+  },
+}));
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default ({ url, method, body, onSuccess }) => {
+  const classes = useStyles();
   const [errors, setErrors] = useState(null);
   const doRequest = async (props = {}) => {
     try {
@@ -11,14 +24,14 @@ export default ({ url, method, body, onSuccess }) => {
       return response.data;
     } catch (error) {
       setErrors(
-        <div className="alert alert-danger">
-          <h4>Oopps...</h4>
-          <ul className="my-0">
-            {error.response.data.errors.map((err) => (
-              <li key={err.message}> {err.message} </li>
-            ))}
-          </ul>
-        </div>
+        <>
+          {error.response.data.errors.map((err) => (
+            <Alert className={classes.root} severity="error" key={err.message}>
+              {err.message}
+            </Alert>
+          ))}
+        </>,
+        {}
       );
     }
   };

@@ -1,71 +1,56 @@
 import Link from "next/link";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Slide from "@material-ui/core/Slide";
+import { Paper, Grid, Typography, Slide } from "@material-ui/core";
+import TicketsTable from "../components/ticketsTable";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     textAlign: "center",
-    minHeight: "100vh",
+    minHeight: `93vh`,
     padding: theme.spacing(4),
     backgroundImage: " linear-gradient(to bottom, #fbc2eb 0%, #a6c1ee 100%)",
+  },
+  title: {
+    fontFamily: "Lobster",
   },
 }));
 const LandingPage = ({ currentUser, tickets }) => {
   const classes = useStyles();
 
-  const ticketList = tickets.map((ticket) => {
-    return (
-      <tr key={ticket.id}>
-        <td>{ticket.title}</td>
-        <td>{ticket.price + "$"}</td>
-        <td>
-          <Link href="/tickets/[ticketId]" as={`/tickets/${ticket.id}`}>
-            <a> View</a>
-          </Link>
-        </td>
-      </tr>
-    );
-  });
-
   return (
     <Paper className={classes.root} square>
-      {currentUser ? (
-        <div>
-          <h1>Tickets</h1>
-          {ticketList.length > 0 ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Price</th>
-                  <th>Link</th>
-                </tr>
-              </thead>
-              <tbody>{ticketList}</tbody>
-            </table>
-          ) : (
-            <div className="container">
-              <h4>
-                No Tickets Availible. You can create new tickets
-                <Link href="/tickets/new">
-                  <a> here</a>
-                </Link>
-              </h4>
-            </div>
-          )}
-        </div>
-      ) : (
-        <Slide
-          direction="up"
-          in
-          mountOnEnter
-          unmountOnExit
-          timeout={{ enter: 500, exit: 10 }}
-        >
+      <Slide
+        direction="up"
+        in
+        mountOnEnter
+        unmountOnExit
+        timeout={{ enter: 500, exit: 10 }}
+      >
+        {currentUser ? (
+          <Grid>
+            <Typography
+              gutterBottom
+              className={classes.title}
+              variant={"h2"}
+              color={"primary"}
+            >
+              Available Tickets
+            </Typography>
+            {tickets.length > 0 ? (
+              <TicketsTable tickets={tickets} />
+            ) : (
+              <Grid>
+                <Typography color="secondary" variant="h5">
+                  No Tickets Are Availible Right Now. You can create new tickets
+                  <Link href="/tickets/new">
+                    <a> here</a>
+                  </Link>
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+        ) : (
           <Grid
             container
             direction={"column"}
@@ -73,22 +58,32 @@ const LandingPage = ({ currentUser, tickets }) => {
             alignItems={"center"}
           >
             <Grid item>
-              <Typography gutterBottom color="primary" variant={"h3"}>
+              <Typography
+                gutterBottom
+                className={classes.title}
+                color="primary"
+                variant={"h3"}
+              >
                 Hello Friend!
               </Typography>
             </Grid>
 
             <Grid item>
-              <Typography color="secondary" variant={"subtitle2"}>
+              <Typography color="secondary" variant="h5">
                 You are not signed in.{" "}
-                <Link href={"/auth/signin"}>Sign in</Link> now or{" "}
-                <Link href={"/auth/signup"}>create new account</Link> to start
-                dealing Tickets!
+                <Link href={"/auth/signin"}>
+                  <a>Sign in</a>
+                </Link>{" "}
+                now or{" "}
+                <Link href={"/auth/signup"}>
+                  <a>create new account</a>
+                </Link>{" "}
+                to start dealing Tickets!
               </Typography>
             </Grid>
           </Grid>
-        </Slide>
-      )}
+        )}
+      </Slide>
     </Paper>
   );
 };
